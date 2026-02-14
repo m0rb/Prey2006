@@ -1664,12 +1664,8 @@ void idAsyncClient::SetupConnection( void ) {
 		msg.WriteShort( CONNECTIONLESS_MESSAGE_ID );
 		msg.WriteString( "connect" );
 		msg.WriteInt( ASYNC_PROTOCOL_VERSION );
-#if ID_FAKE_PURE
-		// fake win32 OS - might need to adapt depending on the case
+		// fake win32 OS to match server's BUILD_OS_ID
 		msg.WriteShort( 0 );
-#else
-		msg.WriteShort( BUILD_OS_ID );
-#endif
 		msg.WriteInt( clientDataChecksum );
 		msg.WriteInt( serverChallenge );
 		msg.WriteShort( clientId );

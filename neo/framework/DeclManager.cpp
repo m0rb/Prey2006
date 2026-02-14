@@ -1032,34 +1032,47 @@ unsigned int idDeclManagerLocal::GetChecksum( void ) const {
 	int i, j, total, num;
 	int *checksumData;
 
-	// get the total number of decls
-	total = 0;
-	for ( i = 0; i < DECL_MAX_TYPES; i++ ) {
-		total += linearLists[i].Num();
-	}
+	idList<idStr> declNames;
+	idList<int> declChecksums;
 
-	checksumData = (int *) _alloca16( total * 2 * sizeof( int ) );
-
-	total = 0;
 	for ( i = 0; i < DECL_MAX_TYPES; i++ ) {
 		declType_t type = (declType_t) i;
-
 		num = linearLists[i].Num();
 		for ( j = 0; j < num; j++ ) {
 			idDeclLocal *decl = linearLists[i][j];
-
 			if ( decl->sourceFile == &implicitDecls ) {
 				continue;
 			}
-
-			checksumData[total*2+0] = total;
-			checksumData[total*2+1] = decl->checksum;
-			total++;
+			declNames.Append( decl->name );
+			declChecksums.Append( decl->checksum );
 		}
 	}
 
-	LittleRevBytes( checksumData, sizeof(int), total * 2 );
-	return MD5_BlockChecksum( checksumData, total * 2 * sizeof( int ) );
+	// Sort the checksums by decl name for cross-platform consistency
+	for ( i = 0; i < declNames.Num(); i++ ) {
+		for ( j = i + 1; j < declNames.Num(); j++ ) {
+			if ( declNames[i].Icmp( declNames[j] ) > 0 ) {
+				idStr tempName = declNames[i];
+				declNames[i] = declNames[j];
+				declNames[j] = tempName;
+
+				int tempChecksum = declChecksums[i];
+				declChecksums[i] = declChecksums[j];
+				declChecksums[j] = tempChecksum;
+			}
+		}
+	}
+
+	// Build the checksum array
+	checksumData = (int *) _alloca16( declNames.Num() * 2 * sizeof( int ) );
+	for ( i = 0; i < declNames.Num(); i++ ) {
+		checksumData[i*2+0] = i;
+		checksumData[i*2+1] = declChecksums[i];
+	}
+
+	LittleRevBytes( checksumData, sizeof(int), declNames.Num() * 2 );
+	unsigned int finalChecksum = MD5_BlockChecksum( checksumData, declNames.Num() * 2 * sizeof( int ) );
+	return finalChecksum;
 }
 
 /*
@@ -1922,27 +1935,46 @@ void idDeclLocal::SetTextLocal( const char *text, const int length ) {
 
 	Mem_Free( textSource );
 
-	checksum = MD5_BlockChecksum( text, length );
+	// Normalize line endings to CRLF
+	idStr normalizedText;
+	for ( int i = 0; i < length; i++ ) {
+		if ( text[i] == '\r' && i + 1 < length && text[i + 1] == '\n' ) {
+			normalizedText.Append( '\r' );
+			normalizedText.Append( '\n' );
+			i++;
+		} else if ( text[i] == '\n' ) {
+			// Replace LF with CRLF
+			normalizedText.Append( '\r' );
+			normalizedText.Append( '\n' );
+		} else if ( text[i] == '\r' ) {
+			normalizedText.Append( '\r' );
+			normalizedText.Append( '\n' );
+		} else {
+			normalizedText.Append( text[i] );
+		}
+	}
+
+	checksum = MD5_BlockChecksum( normalizedText.c_str(), normalizedText.Length() );
 
 #ifdef GET_HUFFMAN_FREQUENCIES
-	for( int i = 0; i < length; i++ ) {
-		huffmanFrequencies[((const unsigned char *)text)[i]]++;
+	for( int i = 0; i < normalizedText.Length(); i++ ) {
+		huffmanFrequencies[((const unsigned char *)normalizedText.c_str())[i]]++;
 	}
 #endif
 
 #ifdef USE_COMPRESSED_DECLS
 	int maxBytesPerCode = ( maxHuffmanBits + 7 ) >> 3;
-	byte *compressed = (byte *)_alloca( length * maxBytesPerCode );
-	compressedLength = HuffmanCompressText( text, length, compressed, length * maxBytesPerCode );
+	byte *compressed = (byte *)_alloca( normalizedText.Length() * maxBytesPerCode );
+	compressedLength = HuffmanCompressText( normalizedText.c_str(), normalizedText.Length(), compressed, normalizedText.Length() * maxBytesPerCode );
 	textSource = (char *)Mem_Alloc( compressedLength );
 	memcpy( textSource, compressed, compressedLength );
 #else
-	compressedLength = length;
-	textSource = (char *) Mem_Alloc( length + 1 );
-	memcpy( textSource, text, length );
-	textSource[length] = '\0';
+	compressedLength = normalizedText.Length();
+	textSource = (char *) Mem_Alloc( compressedLength + 1 );
+	memcpy( textSource, normalizedText.c_str(), compressedLength );
+	textSource[compressedLength] = '\0';
 #endif
-	textLength = length;
+	textLength = normalizedText.Length();
 }
 
 /*
