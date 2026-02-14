@@ -1,4 +1,4 @@
-name: Windows x86_64 Build
+name: Windows Build (x86_64 & x86)
 on:
   push:
     branches:
@@ -21,33 +21,64 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  job:
-    name: Windows (x86_64) Github Auto-Builds
-    runs-on: ${{ matrix.os }}
+  build:
+    name: Windows (${{ matrix.arch }})
+    runs-on: windows-latest
+
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest]
+        arch: [x86_64, x86]
+        include:
+          - arch: x86_64
+            preset_config: ninja-x86_64
+            preset_build: ninja-release
+            dll_name: gamex86_64.dll
+          - arch: x86
+            preset_config: ninja-x86
+            preset_build: ninja-release-x86
+            dll_name: gamex86.dll
+
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: true
+          fetch-depth: 1
 
-      - name: Get latest CMake if possible
+      - name: Restore CMake cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/.cmake
+            build/CMakeFiles
+          key: ${{ runner.os }}-cmake-${{ matrix.arch }}-${{ hashFiles('neo/CMakeLists.txt') }}
+          restore-keys: ${{ runner.os }}-cmake-${{ matrix.arch }}-
+
+      - name: Get latest CMake
         uses: lukka/get-cmake@latest
 
-      - name: Run CMake+Ninja to build the engine.
+      - name: Setup MSVC environment (x86_64)
+        if: matrix.arch == 'x86_64'
+        shell: cmd
+        run: |
+          call "%ProgramFiles(x86)%\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\VsDevCmd.bat" -arch=x64
+
+      - name: Setup MSVC environment (x86)
+        if: matrix.arch == 'x86'
+        shell: cmd
+        run: |
+          call "%ProgramFiles(x86)%\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\VsDevCmd.bat" -arch=win32
+
+      - name: Build with CMake+Ninja
         uses: lukka/run-cmake@v10
         with:
           cmakeListsTxtPath: "${{github.workspace}}/neo/CMakeLists.txt"
-          configurePreset: "ninja-multi"
-          buildPreset: "ninja-release"
+          configurePreset: "${{ matrix.preset_config }}"
+          buildPreset: "${{ matrix.preset_build }}"
 
       - name: Create binary.conf
         shell: pwsh
         run: |
-          cd ${{github.workspace}}\base
-          Out-Null
           @'
           // add flags for supported operating systems in this pak
           // one id per line
@@ -57,30 +88,27 @@ jobs:
           // 2 linux-x86
           0
 
-          '@ | Out-File -FilePath ${{github.workspace}}\base\binary.conf -Encoding utf8
+          '@ | Out-File -FilePath "${{ github.workspace }}\base\binary.conf" -Encoding utf8
 
       - name: Package into game00.pk4
         shell: pwsh
         run: |
-          $files = @(
-            "binary.conf",
-            "gamex86_64.dll"
-          )
-
-          if (Test-Path -Path game00.pk4) { Remove-Item -Path game00.pk4 -Force }
+          cd "${{ github.workspace }}\base"
+          $files = @("binary.conf", "${{ matrix.dll_name }}")
+          if (Test-Path game00.pk4) { Remove-Item game00.pk4 -Force }
           Compress-Archive -Path $files -DestinationPath game00.pk4 -Force
 
-      - name: Copy base files to the output folder
+      - name: Prepare output
         shell: pwsh
         run: |
-          cd ${{github.workspace}}
-          Copy-Item -Path "base" -Destination "output/windows/base" -Recurse
-          Copy-Item -Path ".github/Changelog.md" -Destination "output/windows"
-          Copy-Item -Path ".github/Configuration.md" -Destination "output/windows"
-          Copy-Item -Path ".github/README.md" -Destination "output/windows"
+          $outputDir = "output/windows-${{ matrix.arch }}"
+          New-Item -ItemType Directory -Path $outputDir -Force | Out-Null
+          Copy-Item "base" "$outputDir/base" -Recurse -Force
+          Copy-Item ".github/Changelog.md", ".github/Configuration.md", ".github/README.md" $outputDir
 
-      - name: Artifacts
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: prey2006-windows-x86_64
-          path: output/windows/
+          name: prey2006-windows-${{ matrix.arch }}
+          path: output/windows-${{ matrix.arch }}/
+          compression-level: 6
