@@ -49,7 +49,7 @@ jobs:
             attempt=0
             until [ "$attempt" -ge 3 ]
             do
-              /usr/sbin/pkg-static update -f && /usr/sbin/pkg-static install -y cmake ccache pkgconf ninja openal-soft sdl2 tree zip git && break
+              /usr/sbin/pkg-static update -f && /usr/sbin/pkg-static install -y cmake ccache pkgconf ninja openal-soft sdl2 tree zip git libbacktrace && break
               attempt=$((attempt+1))
               echo "pkg-static install failed, retrying ($attempt/3)" >&2
               sleep $((attempt * 5))
@@ -58,7 +58,7 @@ jobs:
             attempt=0
             until [ "$attempt" -ge 3 ]
             do
-              pkg update -f && pkg install -y cmake ccache pkgconf ninja openal-soft sdl2 tree zip git && break
+              pkg update -f && pkg install -y cmake ccache pkgconf ninja openal-soft sdl2 tree zip git libbacktrace && break
               attempt=$((attempt+1))
               echo "pkg install failed, retrying ($attempt/3)" >&2
               sleep $((attempt * 5))
