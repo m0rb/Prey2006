@@ -945,6 +945,7 @@ R_IssueEntityDefCallback
 bool R_IssueEntityDefCallback( idRenderEntityLocal *def ) {
 	bool update;
 	idBounds	oldBounds;
+	oldBounds.Zero(); // Initialize to silence GCC maybe-uninitialized warning
 	const bool checkBounds = r_checkBounds.GetBool();
 
 	if ( checkBounds ) {
