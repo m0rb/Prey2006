@@ -227,16 +227,26 @@ set(D3_COMPILER_IS_GCC_OR_CLANG FALSE)
 if(NOT MSVC)
 	if(NOT WIN32)
 		# libbacktrace support - TODO: might work with MinGW? we don't have a crash handler for win32 though..
+		include(CheckLibraryExists)
 		include(CheckCSourceCompiles)
-		set(CMAKE_REQUIRED_LIBRARIES backtrace)
-		check_c_source_compiles("#include <backtrace.h>
-		int main() { backtrace_create_state(NULL, 0, NULL, NULL); return 0; }" HAVE_LIBBACKTRACE)
-		unset(CMAKE_REQUIRED_LIBRARIES)
-
-		if(HAVE_LIBBACKTRACE)
-			set(sys_libs ${sys_libs} backtrace)
-			add_definitions(-DD3_HAVE_LIBBACKTRACE)
-			message(STATUS "Using libbacktrace")
+		
+		# First find the library
+		find_library(BACKTRACE_LIBRARY backtrace)
+		
+		if(BACKTRACE_LIBRARY)
+			# Now check if it actually works with the header
+			set(CMAKE_REQUIRED_LIBRARIES ${BACKTRACE_LIBRARY})
+			check_c_source_compiles("#include <backtrace.h>
+			int main() { backtrace_create_state(NULL, 0, NULL, NULL); return 0; }" HAVE_LIBBACKTRACE)
+			unset(CMAKE_REQUIRED_LIBRARIES)
+			
+			if(HAVE_LIBBACKTRACE)
+				set(sys_libs ${sys_libs} ${BACKTRACE_LIBRARY})
+				add_definitions(-DD3_HAVE_LIBBACKTRACE)
+				message(STATUS "Using libbacktrace: ${BACKTRACE_LIBRARY}")
+			else()
+				message(WARNING "libbacktrace was found at ${BACKTRACE_LIBRARY} but the test program failed to compile. Check if headers are installed.")
+			endif()
 		else()
 			message(WARNING "libbacktrace wasn't found. It's not required but recommended, because it provides useful backtraces if engine/game crashes")
 		endif()
@@ -279,6 +289,7 @@ endif()
 if(D3_COMPILER_IS_GCC_OR_CLANG)
 	add_compile_options(-pipe)
 	add_compile_options(-Wall)
+	add_compile_options(-Werror)
 
 	if(NOT CMAKE_CROSSCOMPILING AND ONATIVE)
 		add_compile_options(-march=native)
@@ -297,9 +308,17 @@ if(D3_COMPILER_IS_GCC_OR_CLANG)
 	set(CMAKE_C_FLAGS_DEBUG "-g -ggdb -D_DEBUG -O0")
 	set(CMAKE_C_FLAGS_DEBUGALL "-g -ggdb -D_DEBUG")
 	set(CMAKE_C_FLAGS_PROFILE "-g -ggdb -D_DEBUG -O1 -fno-omit-frame-pointer")
-	set(CMAKE_C_FLAGS_RELEASE "-O2 -fno-math-errno -fno-trapping-math  -ffinite-math-only -fomit-frame-pointer")
-	set(CMAKE_C_FLAGS_RELWITHDEBINFO "-g -ggdb -O2 -fno-math-errno -fno-trapping-math  -ffinite-math-only -fno-omit-frame-pointer")
-	set(CMAKE_C_FLAGS_MINSIZEREL "-Os -fno-math-errno -fno-trapping-math  -ffinite-math-only -fomit-frame-pointer")
+	
+	# gcc-specific optimization flags
+	if(CMAKE_COMPILER_IS_GNUCC)
+		set(CMAKE_C_FLAGS_RELEASE "-O2 -fno-math-errno -fno-trapping-math -ffinite-math-only -fomit-frame-pointer")
+		set(CMAKE_C_FLAGS_RELWITHDEBINFO "-g -ggdb -O2 -fno-math-errno -fno-trapping-math -ffinite-math-only -fno-omit-frame-pointer")
+		set(CMAKE_C_FLAGS_MINSIZEREL "-Os -fno-math-errno -fno-trapping-math -ffinite-math-only -fomit-frame-pointer")
+	else()
+		set(CMAKE_C_FLAGS_RELEASE "-O2 -fno-math-errno -fno-trapping-math -fomit-frame-pointer")
+		set(CMAKE_C_FLAGS_RELWITHDEBINFO "-g -ggdb -O2 -fno-math-errno -fno-trapping-math -fno-omit-frame-pointer")
+		set(CMAKE_C_FLAGS_MINSIZEREL "-Os -fno-math-errno -fno-trapping-math -fomit-frame-pointer")
+	endif()
 
 	set(CMAKE_CXX_FLAGS_DEBUGALL ${CMAKE_C_FLAGS_DEBUGALL})
 	set(CMAKE_CXX_FLAGS_PROFILE ${CMAKE_C_FLAGS_PROFILE})
@@ -338,6 +357,108 @@ if(D3_COMPILER_IS_GCC_OR_CLANG)
 	# TODO fix these warnings
 	add_compile_options(-Wno-sign-compare)
 	add_compile_options(-Wno-switch)
+	
+	# "Safe to ignore" warning suppression, clang and gcc
+	add_compile_options(-Wno-unused-variable)
+	add_compile_options(-Wno-unused-but-set-variable)
+	add_compile_options(-Wno-unused-value)
+	add_compile_options(-Wno-unused-function)
+	add_compile_options(-Wno-format)
+	add_compile_options(-Wno-enum-compare)
+	add_compile_options(-Wno-deprecated-declarations)
+	add_compile_options(-Wno-array-bounds)
+	add_compile_options(-Wno-missing-braces)
+	
+	# clang-only warning suppression (check each flag for support)
+	if(D3_COMPILER_IS_CLANG)
+		CHECK_CXX_COMPILER_FLAG("-Wno-unused-private-field" cxx_has_Wno_unused_private_field)
+		if(cxx_has_Wno_unused_private_field)
+			add_compile_options(-Wno-unused-private-field)
+		endif()
+		
+		CHECK_CXX_COMPILER_FLAG("-Wno-nontrivial-memcall" cxx_has_Wno_nontrivial_memcall)
+		if(cxx_has_Wno_nontrivial_memcall)
+			add_compile_options(-Wno-nontrivial-memcall)
+		endif()
+		
+		CHECK_CXX_COMPILER_FLAG("-Wno-logical-op-parentheses" cxx_has_Wno_logical_op_parentheses)
+		if(cxx_has_Wno_logical_op_parentheses)
+			add_compile_options(-Wno-logical-op-parentheses)
+		endif()
+		
+		CHECK_CXX_COMPILER_FLAG("-Wno-parentheses-equality" cxx_has_Wno_parentheses_equality)
+		if(cxx_has_Wno_parentheses_equality)
+			add_compile_options(-Wno-parentheses-equality)
+		endif()
+		
+		CHECK_CXX_COMPILER_FLAG("-Wno-writable-strings" cxx_has_Wno_writable_strings)
+		if(cxx_has_Wno_writable_strings)
+			add_compile_options(-Wno-writable-strings)
+		endif()
+		
+		CHECK_CXX_COMPILER_FLAG("-Wno-overloaded-virtual" cxx_has_Wno_overloaded_virtual_clang)
+		if(cxx_has_Wno_overloaded_virtual_clang)
+			add_compile_options(-Wno-overloaded-virtual)
+		endif()
+		
+		CHECK_CXX_COMPILER_FLAG("-Wno-extern-initializer" cxx_has_Wno_extern_initializer)
+		if(cxx_has_Wno_extern_initializer)
+			add_compile_options(-Wno-extern-initializer)
+		endif()
+		
+		CHECK_CXX_COMPILER_FLAG("-Wno-varargs" cxx_has_Wno_varargs)
+		if(cxx_has_Wno_varargs)
+			add_compile_options(-Wno-varargs)
+		endif()
+		
+		CHECK_CXX_COMPILER_FLAG("-Wno-sometimes-uninitialized" cxx_has_Wno_sometimes_uninitialized)
+		if(cxx_has_Wno_sometimes_uninitialized)
+			add_compile_options(-Wno-sometimes-uninitialized)
+		endif()
+		
+		CHECK_CXX_COMPILER_FLAG("-Wno-tautological-pointer-compare" cxx_has_Wno_tautological_pointer_compare)
+		if(cxx_has_Wno_tautological_pointer_compare)
+			add_compile_options(-Wno-tautological-pointer-compare)
+		endif()
+		
+		CHECK_CXX_COMPILER_FLAG("-Wno-tautological-constant-out-of-range-compare" cxx_has_Wno_tautological_constant_out_of_range_compare)
+		if(cxx_has_Wno_tautological_constant_out_of_range_compare)
+			add_compile_options(-Wno-tautological-constant-out-of-range-compare)
+		endif()
+		
+		CHECK_CXX_COMPILER_FLAG("-Wno-pointer-bool-conversion" cxx_has_Wno_pointer_bool_conversion)
+		if(cxx_has_Wno_pointer_bool_conversion)
+			add_compile_options(-Wno-pointer-bool-conversion)
+		endif()
+		
+		CHECK_CXX_COMPILER_FLAG("-Wno-extra-tokens" cxx_has_Wno_extra_tokens)
+		if(cxx_has_Wno_extra_tokens)
+			add_compile_options(-Wno-extra-tokens)
+		endif()
+		
+		CHECK_CXX_COMPILER_FLAG("-Wno-self-assign-field" cxx_has_Wno_self_assign_field)
+		if(cxx_has_Wno_self_assign_field)
+			add_compile_options(-Wno-self-assign-field)
+		endif()
+		
+		CHECK_CXX_COMPILER_FLAG("-Wno-reorder-ctor" cxx_has_Wno_reorder_ctor)
+		if(cxx_has_Wno_reorder_ctor)
+			add_compile_options(-Wno-reorder-ctor)
+		endif()
+		
+		CHECK_CXX_COMPILER_FLAG("-Wno-literal-conversion" cxx_has_Wno_literal_conversion)
+		if(cxx_has_Wno_literal_conversion)
+			add_compile_options(-Wno-literal-conversion)
+		endif()
+	endif()
+	
+	# gcc-only warning suppression
+	if(CMAKE_COMPILER_IS_GNUCC)
+		# gcc doesn't have -Wno-writable-strings; use -Wno-write-strings 
+		add_compile_options(-Wno-write-strings)
+		add_compile_options(-Wno-parentheses)
+		add_compile_options(-Wno-endif-labels)
+	endif()
 
 	CHECK_CXX_COMPILER_FLAG("-Wdangling-reference" cxx_has_Wdangling_reference)
 	if(cxx_has_Wdangling_reference)

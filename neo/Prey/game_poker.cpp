@@ -423,7 +423,7 @@ void hhPoker::EvaluateHand(bool score) {
 	}
 
 	// Assess the best hand
-	pokerhand_t hand;
+	pokerhand_t hand = HAND_NOTHING;  // Initialize to default
 	for (ix=0; ix<NUM_POKER_HANDS; ix++) {
 		if ((hands[ix].requirement & requirements) == hands[ix].requirement) {
 			hand = hands[ix].hand;

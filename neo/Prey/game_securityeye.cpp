@@ -286,7 +286,7 @@ void hhSecurityEye::SetupRotationParms() {
 
 // Turn to angles using standard rates, angles should be in -180..180 local space
 void hhSecurityEye::TurnTo(idAngles &ang) {
-	float curYaw, curPitch, delta;
+	float curYaw = 0.0f, curPitch = 0.0f, delta;
 	int duration;
 
 	if (m_RotationRate.yaw) {

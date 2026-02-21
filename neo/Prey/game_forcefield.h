@@ -21,6 +21,7 @@ protected:
 	int			DetermineThinnestAxis();
 	idVec3		DetermineForce();
 
+	using idEntity::IsAtRest;
 	virtual bool IsAtRest( int id ) const;
 
 	void		EnterDamagedState();

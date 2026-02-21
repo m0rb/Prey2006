@@ -205,7 +205,7 @@ static void OutlineNormalMap( byte* data, int width, int height, int emptyR, int
 	byte*  out;
 
 	orig = ( byte* )Mem_Alloc( width * height * 4 );
-	memcpy( orig, data, width * height * 4 );
+	memcpy( (void*)orig, data, width * height * 4 );
 
 	for( i = 0; i < width; i++ )
 	{
@@ -268,7 +268,7 @@ static void OutlineColorMap( byte* data, int width, int height, int emptyR, int 
 	byte*  out;
 
 	orig = ( byte* )Mem_Alloc( width * height * 4 );
-	memcpy( orig, data, width * height * 4 );
+	memcpy( (void*)orig, data, width * height * 4 );
 
 	for( i = 0; i < width; i++ )
 	{
@@ -345,7 +345,7 @@ static triHash_t* CreateTriHash( const srfTriangles_t* highMesh )
 	int		   maxLinks, numLinks;
 
 	hash = ( triHash_t* )Mem_Alloc( sizeof( *hash ) );
-	memset( hash, 0, sizeof( *hash ) );
+	memset( (void*)hash, 0, sizeof( *hash ) );
 
 	// find the bounding volume for the mesh
 	bounds.Clear();
@@ -570,7 +570,7 @@ static bool SampleHighMesh( const renderBump_t* rb, const idVec3& point, const i
 	float	   dist, bestDist;
 	int		   block[3];
 	float	   maxDist;
-	int		   c_hits;
+	int		   c_hits; (void)c_hits;
 	int		   i;
 	idVec3	   normal;
 
@@ -1576,11 +1576,11 @@ void RenderBumpFlat_f( const idCmdArgs& args )
 	int	  sample;
 
 	sumBuffer = ( int* )Mem_Alloc( width * height * 4 * 4 );
-	memset( sumBuffer, 0, width * height * 4 * 4 );
+	memset( (void*)sumBuffer, 0, width * height * 4 * 4 );
 	buffer = ( byte* )Mem_Alloc( width * height * 4 );
 
 	colorSumBuffer = ( int* )Mem_Alloc( width * height * 4 * 4 );
-	memset( sumBuffer, 0, width * height * 4 * 4 );
+	memset( (void*)sumBuffer, 0, width * height * 4 * 4 );
 
 	flat = false;
 	// flat = true;

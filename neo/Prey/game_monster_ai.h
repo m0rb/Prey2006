@@ -61,6 +61,7 @@ class hhMonsterAI : public idAI {
 
 public:			
 	CLASS_PROTOTYPE(hhMonsterAI);
+	using idAI::TurnToward; // Unhide base class TurnToward(float)
 
 	hhMonsterAI();
 	~hhMonsterAI();

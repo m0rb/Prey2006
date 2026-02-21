@@ -2095,8 +2095,8 @@ bool idSessionLocal::QuickLoad() {
 		guiGameStatus->SetStateInt( "messagetype", 2 );
 		if ( material ) {
 			guiGameStatus->SetStateBool( "keywide", keywide );
-			guiGameStatus->SetStateString( "saveKey", key ? key : "" );
-			guiGameStatus->SetStateString( "keymaterial", keyMaterial ? keyMaterial : "" );
+			guiGameStatus->SetStateString( "saveKey", key );
+			guiGameStatus->SetStateString( "keymaterial", keyMaterial );
 		}
 		guiGameStatus->StateChanged( ::game->GetTimeGroupTime( 1 ) );
 

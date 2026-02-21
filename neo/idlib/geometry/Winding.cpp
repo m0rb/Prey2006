@@ -100,7 +100,7 @@ int idWinding::Split( const idPlane &plane, const float epsilon, idWinding **fro
 	idWinding *		f, *b;
 	int				maxpts;
 
-	assert( this && numPoints > 0);
+	assert( numPoints > 0);
 
 	// DG: unlikely, but makes sure we don't use uninitialized memory below
 	if ( numPoints == 0 ) {
@@ -109,6 +109,10 @@ int idWinding::Split( const idPlane &plane, const float epsilon, idWinding **fro
 
 	dists = (float *) _alloca( (numPoints+4) * sizeof( float ) );
 	sides = (byte *) _alloca( (numPoints+4) * sizeof( byte ) );
+
+	// Initialize first element to silence GCC maybe-uninitialized warning
+	sides[0] = SIDE_ON;
+	dists[0] = 0.0f;
 
 	counts[0] = counts[1] = counts[2] = 0;
 
@@ -248,7 +252,7 @@ idWinding *idWinding::Clip( const idPlane &plane, const float epsilon, const boo
 	idVec5		mid;
 	int			maxpts;
 
-	assert( this && numPoints > 0 );
+	assert( numPoints > 0 );
 
 	// DG: this shouldn't happen, probably, but if it does we'd use uninitialized memory below
 	if ( numPoints == 0 ) {
@@ -258,6 +262,10 @@ idWinding *idWinding::Clip( const idPlane &plane, const float epsilon, const boo
 
 	dists = (float *) _alloca( (numPoints+4) * sizeof( float ) );
 	sides = (byte *) _alloca( (numPoints+4) * sizeof( byte ) );
+
+	// Initialize first element to silence GCC maybe-uninitialized warning
+	sides[0] = SIDE_ON;
+	dists[0] = 0.0f;
 
 	counts[SIDE_FRONT] = counts[SIDE_BACK] = counts[SIDE_ON] = 0;
 
@@ -368,8 +376,6 @@ bool idWinding::ClipInPlace( const idPlane &plane, const float epsilon, const bo
 	idVec5 *	p1, *p2;
 	idVec5		mid;
 	int			maxpts;
-
-	assert( this );
 
 	dists = (float *) _alloca( (numPoints+4) * sizeof( float ) );
 	sides = (byte *) _alloca( (numPoints+4) * sizeof( byte ) );

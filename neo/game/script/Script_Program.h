@@ -153,6 +153,7 @@ public:
 	virtual void		PushOntoStack( const char* parm, class hhThread* thread ) const {}
 	virtual const char* GetReturnValueAsString( idProgram& program ) const { return ""; }
 	virtual bool		VerifyData( const char* data ) const { return false; }
+	virtual				~idTypeDef() {}
 	//HUMANHEAD END
 };
 

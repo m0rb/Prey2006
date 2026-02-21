@@ -266,7 +266,7 @@ protected:
 
 public:
 							idMD5Anim();
-							~idMD5Anim();
+							virtual ~idMD5Anim();
 
 	void					Free( void );
 	bool					Reload( void );
@@ -329,7 +329,7 @@ public:
 
 								idAnim();
 								idAnim( const idDeclModelDef *modelDef, const idAnim *anim );
-								~idAnim();
+								virtual ~idAnim();
 
 	void						SetAnim( const idDeclModelDef *modelDef, const char *sourcename, const char *animname, int num, const idMD5Anim *md5anims[ ANIM_MaxSyncedAnims ] );
 	const char					*Name( void ) const;

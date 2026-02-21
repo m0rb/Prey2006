@@ -154,6 +154,7 @@ void hhDebrisSpawner::SpawnDebris() {
 	idVec3				debrisVelocity;
 	bool				fit;
 	idBounds			afBounds; //rww
+	afBounds.Zero(); // Initialize to avoid maybe-uninitialized warning
 	bool				gotAFBounds = false; //rww
 	idVec3				defOrigin = vec3_zero;
 	idAngles			defAngles = ang_zero;

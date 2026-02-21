@@ -413,7 +413,7 @@ bool StageView::Draw( const ImVec2& size )
 					if( const ImGuiPayload* payload = ImGui::AcceptDragDropPayload( "StageViewItemsCell" ) )
 					{
 						IM_ASSERT( payload->DataSize == sizeof( int ) );
-						int dropSource = *( const int* )payload->Data;
+						int dropSource = 0; (void)dropSource; *( const int* )payload->Data;
 						OnLvnEnddrag( i );
 						MaterialEditorSetActiveWindow( ME_WINDOW_STAGE );
 					}

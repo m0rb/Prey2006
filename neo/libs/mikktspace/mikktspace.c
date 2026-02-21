@@ -600,8 +600,8 @@ static void MergeVertsFast(int piTriList_in_and_out[], STmpVert pTmpVert[], cons
 
 	fSep = 0.5f*(fvMax[channel]+fvMin[channel]);
 
-	// stop if all vertices are NaNs
-	if (!isfinite(fSep))
+	// stop if all vertices are NaNs or infinities
+	if (fSep != fSep || fSep > 1e30f || fSep < -1e30f) // NaN check and infinity guard
 		return;
 
 	// terminate recursion when the separation/average value
@@ -728,7 +728,7 @@ static void MergeVertsSlow(int piTriList_in_and_out[], const SMikkTSpaceContext 
 
 static void GenerateSharedVerticesIndexListSlow(int piTriList_in_and_out[], const SMikkTSpaceContext * pContext, const int iNrTrianglesIn)
 {
-	int iNumUniqueVerts = 0, t=0, i=0;
+	int t=0, i=0;
 	for (t=0; t<iNrTrianglesIn; t++)
 	{
 		for (i=0; i<3; i++)
@@ -761,8 +761,6 @@ static void GenerateSharedVerticesIndexListSlow(int piTriList_in_and_out[], cons
 			}
 
 			assert(bFound);
-			// if we found our own
-			if (index2rec == index) { ++iNumUniqueVerts; }
 
 			piTriList_in_and_out[offs] = index2rec;
 		}
@@ -1202,7 +1200,7 @@ static tbool GenerateTSpaces(STSpace psTspace[], const STriInfo pTriInfos[], con
 	STSpace * pSubGroupTspace = NULL;
 	SSubGroup * pUniSubGroups = NULL;
 	int * pTmpMembers = NULL;
-	int iMaxNrFaces=0, iUniqueTspaces=0, g=0, i=0;
+	int iMaxNrFaces=0, g=0, i=0;
 	for (g=0; g<iNrActiveGroups; g++)
 		if (iMaxNrFaces < pGroups[g].iNrFaces)
 			iMaxNrFaces = pGroups[g].iNrFaces;
@@ -1222,7 +1220,6 @@ static tbool GenerateTSpaces(STSpace psTspace[], const STriInfo pTriInfos[], con
 	}
 
 
-	iUniqueTspaces = 0;
 	for (g=0; g<iNrActiveGroups; g++)
 	{
 		const SGroup * pGroup = &pGroups[g];
@@ -1350,10 +1347,9 @@ static tbool GenerateTSpaces(STSpace psTspace[], const STriInfo pTriInfos[], con
 			}
 		}
 
-		// clean up and offset iUniqueTspaces
+		// clean up subgroups
 		for (s=0; s<iUniqueSubGroups; s++)
 			pContext->m_pInterface->m_free(pUniSubGroups[s].pTriMembers);
-		iUniqueTspaces += iUniqueSubGroups;
 	}
 
 	// clean up

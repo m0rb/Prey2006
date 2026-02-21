@@ -10,6 +10,7 @@
 class hhSoulStripperAltFireController : public hhWeaponFireController {
 	CLASS_PROTOTYPE(hhSoulStripperAltFireController);
 public:
+	using hhWeaponFireController::LaunchProjectiles;
 	virtual void		LaunchProjectiles( const idVec3& launchOrigin, const idMat3& aimAxis, const idVec3& pushVelocity, idEntity* projOwner );
 };
 
@@ -22,6 +23,7 @@ public:
 class hhBeamBasedFireController : public hhWeaponFireController {
 	CLASS_PROTOTYPE(hhBeamBasedFireController);
 public:
+	using hhWeaponFireController::LaunchProjectiles;
 	virtual				~hhBeamBasedFireController();
 	virtual void		Init( const idDict* viewDict, hhWeapon* self, hhPlayer* owner );
 	virtual void		LaunchProjectiles( const idVec3& launchOrigin, const idMat3& aimAxis, const idVec3& pushVelocity, idEntity* projOwner );
@@ -46,6 +48,7 @@ protected:
 class hhSunbeamFireController : public hhBeamBasedFireController {
 	CLASS_PROTOTYPE(hhSunbeamFireController);
 public:
+	using hhBeamBasedFireController::LaunchProjectiles;
 	virtual void		LaunchProjectiles( const idVec3& launchOrigin, const idMat3& aimAxis, const idVec3& pushVelocity, idEntity* projOwner );
 	void				Think();
 };

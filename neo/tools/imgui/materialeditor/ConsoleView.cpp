@@ -257,7 +257,7 @@ bool ConsoleView::PreTranslateMessage()
 	{
 		if( elapsed > keydownTime )
 		{
-			int selLocation = 0;
+			int selLocation = 0; (void)selLocation; 0;
 			if( currentHistoryPosition < consoleHistory.Num() - 1 )
 			{
 				++currentHistoryPosition;

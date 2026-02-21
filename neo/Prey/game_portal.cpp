@@ -517,7 +517,7 @@ bool hhPortal::AttemptPortal( idPlane &plane, idEntity *hit, idVec3 location, id
 	}		
 
 	// Compute the location on the plane where the entity would hit
-	float scale;
+	float scale = 0.0f;
 	idVec3 dir = nextLocation - location;
 	plane.RayIntersection( location, dir, scale );
 

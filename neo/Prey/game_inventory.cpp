@@ -272,7 +272,7 @@ bool hhInventory::Give( idPlayer *owner, const idDict &spawnArgs, const char *st
 	bool					tookWeapon;
 	int						amount;
 	idItemInfo				info;
-	hhPlayer*				playerOwner;
+	hhPlayer*				playerOwner = NULL;
 
 
 	if( owner && owner->IsType( hhPlayer::Type ) ) {

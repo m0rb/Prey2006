@@ -42,7 +42,7 @@ void roqParam::InitFromFile( const char* fileName )
 {
 	idParser* src;
 	idToken	  token;
-	int		  readarg;
+	int		  readarg; (void)readarg;
 
 	src = new idParser( fileName, LEXFL_NOSTRINGCONCAT | LEXFL_NOSTRINGESCAPECHARS | LEXFL_ALLOWPATHNAMES );
 	if( !src->IsLoaded() )

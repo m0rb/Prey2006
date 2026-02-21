@@ -1829,7 +1829,7 @@ void hhHunterSimple::Event_GetSightNode() {
 	//find a good spot to attack from
 	trace_t tr;
 	float distance = spawnArgs.GetFloat( "attack_range", "500" );
-	idVec3 testPoint;
+	idVec3 testPoint = vec3_zero;
 	idVec3 finalPoint = vec3_zero;
 	bool clipped = false;
 	float yaw = (GetOrigin() - enemy->GetOrigin()).ToYaw();

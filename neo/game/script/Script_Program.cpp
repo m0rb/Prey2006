@@ -572,7 +572,9 @@ void idTypeDefString::PushOntoStack( const char* parm, hhThread* thread ) const 
 }
 
 const char* idTypeDefString::GetReturnValueAsString( idProgram& program ) const {
-	return program.GetReturnedString();
+	static idStr retVal;  // static to persist after return
+	retVal = program.GetReturnedString();
+	return retVal.c_str();
 }
 
 bool idTypeDefString::VerifyData( const char* data ) const {
@@ -630,7 +632,9 @@ void idTypeDefEntity::PushOntoStack( const char* parm, hhThread* thread ) const 
 }
 
 const char* idTypeDefEntity::GetReturnValueAsString( idProgram& program ) const {
-	return program.GetReturnedString();
+	static idStr retVal;  // static to persist after return
+	retVal = program.GetReturnedString();
+	return retVal.c_str();
 }
 
 bool idTypeDefEntity::VerifyData( const char* data ) const {

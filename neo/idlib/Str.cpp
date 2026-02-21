@@ -259,13 +259,13 @@ Several metacharacter may be used in the filter.
 */
 bool idStr::Filter( const char *filter, const char *name, bool casesensitive ) {
 	idStr buf;
-	int i, found, index;
+	int found, index;
 
 	while(*filter) {
 		if (*filter == '*') {
 			filter++;
 			buf.Empty();
-			for (i = 0; *filter; i++) {
+			while (*filter) {
 				if ( *filter == '*' || *filter == '?' || (*filter == '[' && *(filter+1) != '[') ) {
 					break;
 				}

@@ -303,7 +303,7 @@ void hhPlayerView::DamageImpulse( idVec3 localKickDir, const idDict *damageDef )
 		float mbTime = damageDef->GetFloat( "mb_time" );
 		float severity = damageDef->GetFloat( "mb_amplitude" );
 		if ( mbTime ) {
-			idVec3 blurDirection;
+			idVec3 blurDirection = vec3_zero;
 			blurDirection.y = localKickDir[0];	// forward/back kick will blur vertically
 			blurDirection.x = localKickDir[1];	// side kick will blur horizontally
 			blurDirection.y += localKickDir[2];	// up/down kick will add to vertical
