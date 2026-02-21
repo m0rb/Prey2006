@@ -3910,7 +3910,7 @@ const idDeclEntityDef *idGameLocal::FindEntityDef( const char *name, bool makeDe
 #if GERMAN_VERSION
 		decl = declManager->FindType( DECL_ENTITYDEF, va( "%s_mp_nogore", name ), false );
 		if ( !decl ) // Fall through to normal mp decls below
-#else if !GOLD // For testing the german defs
+#elif !GOLD // For testing the german defs
 		if ( g_nogore.GetBool() ) {
 			decl = declManager->FindType( DECL_ENTITYDEF, va( "%s_mp_nogore", name ), false );
 		}
@@ -3922,7 +3922,7 @@ const idDeclEntityDef *idGameLocal::FindEntityDef( const char *name, bool makeDe
 #if GERMAN_VERSION
 		decl = declManager->FindType( DECL_ENTITYDEF, va( "%s_nogore", name ), false );
 		if ( !decl )
-#else if !GOLD // For testing the german defs
+#elif !GOLD // For testing the german defs
 		if ( g_nogore.GetBool() ) {
 			decl = declManager->FindType( DECL_ENTITYDEF, va( "%s_nogore", name ), false );
 		}

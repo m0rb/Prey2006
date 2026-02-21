@@ -355,7 +355,7 @@ idLexer::ReadEscapeCharacter
 ================
 */
 int idLexer::ReadEscapeCharacter( char *ch ) {
-	int c, val, i;
+	int c, val;
 
 	// step over the leading '\\'
 	idLexer::script_p++;
@@ -375,7 +375,7 @@ int idLexer::ReadEscapeCharacter( char *ch ) {
 		case 'x':
 		{
 			idLexer::script_p++;
-			for (i = 0, val = 0; ; i++, idLexer::script_p++) {
+			for (val = 0; ; idLexer::script_p++) {
 				c = *idLexer::script_p;
 				if (c >= '0' && c <= '9')
 					c = c - '0';
@@ -400,7 +400,7 @@ int idLexer::ReadEscapeCharacter( char *ch ) {
 			if (*idLexer::script_p < '0' || *idLexer::script_p > '9') {
 				idLexer::Error("unknown escape char");
 			}
-			for (i = 0, val = 0; ; i++, idLexer::script_p++) {
+			for (val = 0; ; idLexer::script_p++) {
 				c = *idLexer::script_p;
 				if (c >= '0' && c <= '9')
 					c = c - '0';

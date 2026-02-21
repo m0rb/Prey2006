@@ -230,7 +230,7 @@ void idGLDrawableView::ResetView( void )
 	worldEntity.axis = mat3_identity;
 
 	// set global shader parms
-	memset( globalParms, 0, sizeof( globalParms ) );
+	memset( (void*)globalParms, 0, sizeof( globalParms ) );
 	globalParms[0] = globalParms[1] = globalParms[2] = globalParms[3] = 1.f;
 
 	worldEntity.shaderParms[0] = 1.f;

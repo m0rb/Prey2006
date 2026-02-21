@@ -134,7 +134,7 @@ DeclEditor::Start
 */
 void DeclEditor::Start( idDecl* decl )
 {
-	int	  numLines		  = 0;
+	int	  numLines = 0; (void)numLines; 0;
 	int	  numCharsPerLine = 0;
 	int	  maxCharsPerLine = 0;
 	idStr declText;

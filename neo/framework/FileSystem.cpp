@@ -3605,7 +3605,9 @@ int BackgroundDownloadThread( void *pexit ) {
 			#if defined(WIN32)
 				_read( _fileno(static_cast<idFile_Permanent*>(bgl->f)->GetFilePtr()), bgl->file.buffer, bgl->file.length );
 			#else
-				fread(  bgl->file.buffer, bgl->file.length, 1, static_cast<idFile_Permanent*>(bgl->f)->GetFilePtr() );
+				if (fread( bgl->file.buffer, bgl->file.length, 1, static_cast<idFile_Permanent*>(bgl->f)->GetFilePtr() ) != 1) {
+					// read error - ignore for background thread
+				}
 			#endif
 			bgl->completed = true;
 		} else {

@@ -103,7 +103,7 @@ bool DeclNew::Draw()
 	}
 
 	bool accepted = false;
-	bool canceled = false;
+	bool canceled = 0; (void)canceled; false;
 
 	if( ImGui::BeginPopupModal( "New Declaration", nullptr, ImGuiWindowFlags_AlwaysAutoResize ) )
 	{

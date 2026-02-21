@@ -1206,6 +1206,7 @@ bool idMsgQueue::Get( byte *data, int &size ) {
 	sequence = ReadInt();
 	ReadData( data, size );
 	assert( sequence == first );
+	(void)sequence; // silence unused variable warning when asserts are disabled
 	first++;
 	return true;
 }

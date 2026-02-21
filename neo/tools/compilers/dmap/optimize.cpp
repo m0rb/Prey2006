@@ -110,7 +110,7 @@ static optEdge_t* AllocEdge( void )
 	}
 	e = &optEdges[numOptEdges];
 	numOptEdges++;
-	memset( e, 0, sizeof( *e ) );
+	memset( (void*)e, 0, sizeof( *e ) );
 
 	return e;
 }
@@ -236,7 +236,7 @@ static optVertex_t* FindOptVertex( idDrawVert* v, optimizeGroup_t* opt )
 	numOptVerts++;
 
 	vert = &optVerts[i];
-	memset( vert, 0, sizeof( *vert ) );
+	memset( (void*)vert, 0, sizeof( *vert ) );
 	vert->v		= *v;
 	vert->pv[0] = x;
 	vert->pv[1] = y;
@@ -302,7 +302,7 @@ static optVertex_t* EdgeIntersection( const optVertex_t* p1, const optVertex_t* 
 
 	// FIXME: how are we freeing this, since it doesn't belong to a tri?
 	v = ( idDrawVert* )Mem_Alloc( sizeof( *v ) );
-	memset( v, 0, sizeof( *v ) );
+	memset( (void*)v, 0, sizeof( *v ) );
 
 	v->xyz	  = p1->v.xyz * ( 1.0 - f ) + p2->v.xyz * f;
 	v->normal = p1->v.normal * ( 1.0 - f ) + p2->v.normal * f;

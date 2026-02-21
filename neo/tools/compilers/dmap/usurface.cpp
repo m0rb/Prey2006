@@ -94,7 +94,7 @@ static void AddTriListToArea( uEntity_t* e, mapTri_t* triList, int planeNum, int
 	if( !group )
 	{
 		group = ( optimizeGroup_t* )Mem_Alloc( sizeof( *group ) );
-		memset( group, 0, sizeof( *group ) );
+		memset( (void*)group, 0, sizeof( *group ) );
 		group->planeNum	  = planeNum;
 		group->mergeGroup = triList->mergeGroup;
 		group->material	  = triList->material;

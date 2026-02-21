@@ -223,7 +223,7 @@ void Cmd_SpawnABunch_f( const idCmdArgs &args ) {
 		return;
 	}
 
-	if ( args.Argc() < 2 || !args.Argc() & 1 ) {	// must always have an even number of arguments
+	if ( args.Argc() < 2 || !(args.Argc() & 1) ) {	// must always have an even number of arguments
 		gameLocal.Printf( "usage: spawn classname <NumberToSpawn> [<key/value pairs>]\n" );
 		return;
 	}

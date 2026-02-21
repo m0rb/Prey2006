@@ -196,6 +196,7 @@ void idPolynomial::Test( void ) {
 	for ( i = 0; i < num; i++ ) {
 		value = p.GetValue( roots[i] );
 		assert( idMath::Fabs( value ) < 1e-4f );
+		(void)value; // silence unused variable warning when asserts are disabled
 	}
 
 	p = idPolynomial( -5.0f, 4.0f, 3.0f );
@@ -203,6 +204,7 @@ void idPolynomial::Test( void ) {
 	for ( i = 0; i < num; i++ ) {
 		value = p.GetValue( roots[i] );
 		assert( idMath::Fabs( value ) < 1e-4f );
+		(void)value;
 	}
 
 	p = idPolynomial( 1.0f, 4.0f, 3.0f, -2.0f );
@@ -210,6 +212,7 @@ void idPolynomial::Test( void ) {
 	for ( i = 0; i < num; i++ ) {
 		value = p.GetValue( roots[i] );
 		assert( idMath::Fabs( value ) < 1e-4f );
+		(void)value;
 	}
 
 	p = idPolynomial( 5.0f, 4.0f, 3.0f, -2.0f );
@@ -217,6 +220,7 @@ void idPolynomial::Test( void ) {
 	for ( i = 0; i < num; i++ ) {
 		value = p.GetValue( roots[i] );
 		assert( idMath::Fabs( value ) < 1e-4f );
+		(void)value;
 	}
 
 	p = idPolynomial( -5.0f, 4.0f, 3.0f, 2.0f, 1.0f );
@@ -224,6 +228,7 @@ void idPolynomial::Test( void ) {
 	for ( i = 0; i < num; i++ ) {
 		value = p.GetValue( roots[i] );
 		assert( idMath::Fabs( value ) < 1e-4f );
+		(void)value;
 	}
 
 	p = idPolynomial( 1.0f, 4.0f, 3.0f, -2.0f );

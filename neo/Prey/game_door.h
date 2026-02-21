@@ -35,7 +35,8 @@ public:
 	void			SetBuddiesShaderParm( int parm, float value );
 	void			ToggleBuddiesShaderParm( int parm, float firstValue, float secondValue, float toggleDelay );
 	
-	bool			ForcedOpen() const { return( forcedOpen ); };
+	bool			ForcedOpen() const { return( forcedOpen ); }
+	virtual bool	ForcedOpen() { return forcedOpen; }
 	void 			Killed( idEntity *inflictor, idEntity *attacker, int damage, const idVec3 &dir, int location );
 
 protected:

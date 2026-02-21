@@ -539,7 +539,7 @@ void idEditField::KeyDownEvent( int key ) {
 					Sys_SetClipboardData(str.c_str());
 				}
 
-				sprintf(buffer, "%s", buffer + lastCursor);
+				memmove(buffer, buffer + lastCursor, strlen(buffer + lastCursor) + 1);
 			}
 			return;
 		}
@@ -595,7 +595,7 @@ void idEditField::KeyDownEvent( int key ) {
 				}
 
 				buffer[cursor] = '\0';
-				strcat( buffer, buffer + lastCursor );
+				memmove( buffer + cursor, buffer + lastCursor, strlen(buffer + lastCursor) + 1 );
 			}
 			return;
 		}
@@ -633,7 +633,7 @@ void idEditField::KeyDownEvent( int key ) {
 				}
 
 				buffer[cursor] = '\0';
-				strcat( buffer, buffer + lastCursor );
+				memmove( buffer + cursor, buffer + lastCursor, strlen(buffer + lastCursor) + 1 );
 			}
 			return;
 		}

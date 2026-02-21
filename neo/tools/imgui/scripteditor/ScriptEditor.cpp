@@ -302,7 +302,7 @@ ScriptEditor::OpenFile
 */
 void ScriptEditor::OpenFile( const char* fileName )
 {
-	int	  numLines		  = 0;
+	int	  numLines = 0; (void)numLines; 0;
 	int	  numCharsPerLine = 0;
 	int	  maxCharsPerLine = 0;
 	idStr scriptText, extension;

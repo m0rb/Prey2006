@@ -487,6 +487,7 @@ ID_INLINE static void RevBytesSwap( void *bp, int elsize, int elcount ) {
  RESULTS
  Reverses the bitfield of size elsize.
  ===================================================================== */
+[[maybe_unused]]
 ID_INLINE static void RevBitFieldSwap( void *bp, int elsize) {
 	int i;
 	unsigned char *p, t, v;
@@ -525,6 +526,7 @@ SixtetsForIntBig
 TTimo: untested - that's the version from initial base64 encode
 ================
 */
+[[maybe_unused]]
 ID_INLINE static void SixtetsForIntBig( byte *out, int src) {
 	for( int i = 0 ; i < 4 ; i++ ) {
 		out[i] = src & 0x3f;
@@ -555,6 +557,7 @@ IntForSixtetsBig
 TTimo: untested - that's the version from initial base64 decode
 ================
 */
+[[maybe_unused]]
 ID_INLINE static int IntForSixtetsBig( byte *in ) {
 	int ret = 0;
 	ret |= in[0];

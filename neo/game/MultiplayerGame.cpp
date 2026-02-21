@@ -2483,8 +2483,8 @@ void idMultiplayerGame::UpdateHud( idPlayer *player, idUserInterface *hud ) {
 			if (material) {
 				hud->SetStateBool( "readytipvisible", true );
 				hud->SetStateBool( "readykeywide", keywide );
-				hud->SetStateString( "readykey", key ? key : "" );
-				hud->SetStateString( "readykeyMaterial", keyMaterial ? keyMaterial : "" );
+				hud->SetStateString( "readykey", key );
+				hud->SetStateString( "readykeyMaterial", keyMaterial );
 			}
 		}
 		// HUMANHEAD END

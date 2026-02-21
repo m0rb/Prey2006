@@ -34,6 +34,7 @@ public:
 	virtual void Killed( idEntity *inflictor, idEntity *attacker, int damage, const idVec3 &dir, int location );
 	virtual void PrintDebug();
 	virtual void LinkScriptVariables();
+	using hhMonsterAI::TurnToward;  // Bring base class TurnToward(float) into scope
 	bool TurnToward( const idVec3 &pos );
 	virtual	void Damage( idEntity *inflictor, idEntity *attacker, const idVec3 &dir, const char *damageDefName, const float damageScale, const int location );
 	bool StartSound( const char *soundName, const s_channelType channel, int soundShaderFlags, bool broadcast, int *length );

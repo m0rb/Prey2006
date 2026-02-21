@@ -2054,7 +2054,7 @@ void MaterialTreeView::PopupMenu( TreeNode* item )
  */
 void MaterialTreeView::SetItemImage( TreeNode* item, bool mod, bool apply, bool children )
 {
-	int image = 0;
+	int image = 0; (void)image; 0;
 
 	int itemType = tree.GetItemData( item );
 	switch( itemType )

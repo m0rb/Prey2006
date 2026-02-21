@@ -239,7 +239,7 @@ void HashTriangles( optimizeGroup_t* groupList )
 	optimizeGroup_t* group;
 
 	// clear the hash tables
-	memset( hashVerts, 0, sizeof( hashVerts ) );
+	memset( (void*)hashVerts, 0, sizeof( hashVerts ) );
 
 	numHashVerts  = 0;
 	numTotalVerts = 0;
@@ -316,7 +316,7 @@ void FreeTJunctionHash( void )
 			}
 		}
 	}
-	memset( hashVerts, 0, sizeof( hashVerts ) );
+	memset( (void*)hashVerts, 0, sizeof( hashVerts ) );
 }
 
 /*
@@ -586,7 +586,7 @@ void FixGlobalTjunctions( uEntity_t* e )
 	common->VerbosePrintf( "----- FixGlobalTjunctions -----\n" );
 
 	// clear the hash tables
-	memset( hashVerts, 0, sizeof( hashVerts ) );
+	memset( (void*)hashVerts, 0, sizeof( hashVerts ) );
 
 	numHashVerts  = 0;
 	numTotalVerts = 0;

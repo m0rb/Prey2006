@@ -213,7 +213,7 @@ bool MaterialPreviewPropView::Draw( const ImVec2& size )
 
 		for( int i = 0; i < lights.Num(); i++ )
 		{
-			bool	   lightDeletion = false;
+			bool	   lightDeletion = 0; (void)lightDeletion; false;
 			LightData* light		 = &lights[i];
 
 			ImGui::PushID( i );

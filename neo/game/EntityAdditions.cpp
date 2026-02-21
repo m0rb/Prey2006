@@ -1620,7 +1620,7 @@ void idEntity::ActivatePrefixed(const char *prefix, idEntity *activator) {
 	while( kv ) {
 		idEntity *ent = gameLocal.FindEntity( kv->GetValue() );
 		if ( ent ) {
-			if ( ent && ent->RespondsTo( EV_Activate ) || ent->HasSignal( SIG_TRIGGER ) ) {
+			if ( (ent && ent->RespondsTo( EV_Activate )) || ent->HasSignal( SIG_TRIGGER ) ) {
 				ent->Signal( SIG_TRIGGER );
 				ent->ProcessEvent( &EV_Activate, activator );
 			}

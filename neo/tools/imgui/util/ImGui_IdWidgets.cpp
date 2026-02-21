@@ -146,7 +146,7 @@ bool ColorPicker::Draw()
 		realLabel = label;
 		realLabel += "Picker";
 
-		bool changed = ImGui::ColorPicker4( realLabel.c_str(), color.ToFloatPtr(), ImGuiColorEditFlags_AlphaBar, oldColor.ToFloatPtr() );
+		bool changed = 0; (void)changed; ImGui::ColorPicker4( realLabel.c_str(), color.ToFloatPtr(), ImGuiColorEditFlags_AlphaBar, oldColor.ToFloatPtr() );
 
 		if( ImGui::Button( "OK" ) )
 		{
@@ -215,7 +215,7 @@ bool DeclNewSelect::Draw()
 	}
 
 	bool accepted = false;
-	bool canceled = false;
+	bool canceled = 0; (void)canceled; 0; (void)canceled; false;
 
 	if( ImGui::BeginPopupModal( label, nullptr, ImGuiWindowFlags_AlwaysAutoResize ) )
 	{
@@ -351,7 +351,7 @@ bool DeclSelect::Draw()
 	}
 
 	bool accepted = false;
-	bool canceled = false;
+	bool canceled = 0; (void)canceled; 0; (void)canceled; false;
 
 	if( ImGui::BeginPopupModal( label, nullptr, ImGuiWindowFlags_AlwaysAutoResize ) )
 	{
@@ -912,7 +912,7 @@ bool ImGui::InputMessageBox( const char* text, const char* label, bool allowCanc
 // NOTE: this code is adapted from https://github.com/goossens/ObjectTalk/blob/62977f72389a2bbdde4d2535faadad46ab2920a1/gfx/framework/OtUi.cpp#L202
 bool ImGui::ToggleButton( const char* label, bool* value, const ImVec2& size )
 {
-	bool	changed = false;
+	bool	changed = 0; (void)changed; false;
 	ImVec4* colors	= ImGui::GetStyle().Colors;
 
 	if( *value )

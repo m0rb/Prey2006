@@ -94,14 +94,10 @@ private:
 };
 
 
-ID_INLINE idRotation::idRotation( void ) {
+ID_INLINE idRotation::idRotation( void ) : origin( vec3_origin ), vec( vec3_origin ), angle( 0.0f ), axis( mat3_identity ), axisValid( false ) {
 }
 
-ID_INLINE idRotation::idRotation( const idVec3 &rotationOrigin, const idVec3 &rotationVec, const float rotationAngle ) {
-	origin = rotationOrigin;
-	vec = rotationVec;
-	angle = rotationAngle;
-	axisValid = false;
+ID_INLINE idRotation::idRotation( const idVec3 &rotationOrigin, const idVec3 &rotationVec, const float rotationAngle ) : origin( rotationOrigin ), vec( rotationVec ), angle( rotationAngle ), axis( mat3_identity ), axisValid( false ) {
 }
 
 ID_INLINE void idRotation::Set( const idVec3 &rotationOrigin, const idVec3 &rotationVec, const float rotationAngle ) {

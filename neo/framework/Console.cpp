@@ -1281,6 +1281,7 @@ void idConsoleLocal::DrawSolidConsole( float frac ) {
 	y = lines - (SMALLCHAR_HEIGHT*3);
 
 	// draw from the bottom up
+	x = 0; // Initialize x before conditional use
 	if ( display != current ) {
 		// draw arrows to show the buffer is backscrolled
 		renderSystem->SetColor( idStr::ColorForIndex( C_COLOR_CYAN ) );
@@ -1442,6 +1443,7 @@ void idConsoleLocal::DrawFloatConsole( void ) {
 	y = lines - (SMALLCHAR_HEIGHT*3);
 
 	// draw from the bottom up
+	x = 0; // Initialize x before conditional use
 	if ( display != current ) {
 		// draw arrows to show the buffer is backscrolled
 		renderSystem->SetColor( idStr::ColorForIndex( C_COLOR_CYAN ) );

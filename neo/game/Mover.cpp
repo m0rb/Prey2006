@@ -36,7 +36,7 @@ If you have questions concerning this license or the applicable additional terms
 // realtime info like this
 // binary only
 #ifdef HUMANHEAD //removed static and added extern to force external linkage
-extern const char *guiBinaryMoverStates[] = {
+const char *guiBinaryMoverStates[] = {
 	"1",	// pos 1
 	"2",	// pos 2
 	"3",	// moving 1 to 2
