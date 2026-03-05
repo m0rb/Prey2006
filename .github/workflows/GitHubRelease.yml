@@ -1,0 +1,70 @@
+name: Deploy Nightly
+
+on:
+  schedule:
+    - cron: "0 2 * * *" # run at 2 AM UTC
+  workflow_run:
+    workflows:
+      - "Windows Build (x86_64 & x86)"
+      - "Linux Builds (x86_64 & x86)"
+      - "FreeBSD Auto-Builds"
+    types:
+      - completed
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  nightly:
+    name: Deploy nightly
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        arch: [x86_64, x86]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/download-artifact@v5
+        with:
+          path: ${{ github.workspace }}/artifacts/
+          pattern: prey2006-*
+          github-token: ${{ secrets.GH_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Deploy Windows ${{ matrix.arch }} release
+        if: matrix.os == 'windows-latest'
+        uses: WebFreak001/deploy-nightly@v3.2.0
+        with:
+          upload_url: https://uploads.github.com/repos/FriskTheFallenHuman/Prey2006/releases/273219514/assets{?name,label}
+          release_id: 273219514
+          asset_path: $GITHUB_WORKSPACE/prey2006-windows-${{ matrix.arch }}.zip
+          asset_name: prey2006-windows-${{ matrix.arch }}-nightly-$$.zip
+          asset_content_type: application/zip
+
+      - name: Deploy Linux ${{ matrix.arch }} release
+        if: matrix.os == 'ubuntu-latest'
+        uses: WebFreak001/deploy-nightly@v3.2.0
+        with:
+          upload_url: https://uploads.github.com/repos/FriskTheFallenHuman/Prey2006/releases/273219514/assets{?name,label}
+          release_id: 273219514
+          asset_path: ${{ github.workspace }}/artifacts/prey2006-linux-${{ matrix.arch }}.zip
+          asset_name: prey2006-linux-${{ matrix.arch }}-nightly-$$.zip
+          asset_content_type: application/zip
+
+      - name: Deploy FreeBSD release
+        if: matrix.os == 'ubuntu-latest'
+        uses: WebFreak001/deploy-nightly@v3.2.0
+        with:
+          upload_url: https://uploads.github.com/repos/FriskTheFallenHuman/Prey2006/releases/273219514/assets{?name,label}
+          release_id: 273219514
+          asset_path: ${{ github.workspace }}/artifacts/prey2006-freebsd.zip
+          asset_name: prey2006-freebsd-nightly-$$.zip
+          asset_content_type: application/zip
