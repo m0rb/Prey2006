@@ -41,7 +41,7 @@ jobs:
             attempt=0
             until [ "$attempt" -ge 3 ]
             do
-              pkgman install -y cmake ccache pkgconf ninja openal sdl2 tree zip git && break
+              pkgman install -y cmake ccache pkgconf ninja openal_devel libsdl2_devel tree zip git && break
               attempt=$((attempt+1))
               echo "pkgman install failed, retrying ($attempt/3)" >&2
               sleep $((attempt * 5))
