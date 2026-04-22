@@ -48,21 +48,22 @@
 #ifndef ZEXPORT
  #define ZEXPORT
 #endif
-
+// morb was here. OpenBSD 7.8 made me do this.
 // FIXME: why not just set this to int64_t?
-#if !defined(_WIN32) && defined(__USE_LARGEFILE64)
-  #define z_off64_t off64_t
+//#if !defined(_WIN32) && defined(__USE_LARGEFILE64)
+//  #define z_off64_t off64_t
+//#else
+//#if defined(_WIN32)
+#include <stdint.h>
+#ifdef _MSC_VER
+  #define z_off64_t __int64
 #else
-  #if defined(_WIN32)
-    #ifdef _MSC_VER
-      #define z_off64_t __int64
-    #else
-      #include <stdint.h>
-      #define z_off64_t int64_t
-    #endif
-  #else
-    #define z_off64_t z_off_t
-  #endif
+//      #include <stdint.h>
+  #define z_off64_t int64_t
+//    #endif
+//  #else
+//    #define z_off64_t z_off_t
+//  #endif
 #endif
 
 #if defined(__cplusplus) && __cplusplus >= 201103L
