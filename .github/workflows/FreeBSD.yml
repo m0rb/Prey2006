@@ -17,13 +17,17 @@ on:
 
 jobs:
   build:
-    name: FreeBSD Auto-Build
+    name: FreeBSD Auto-Build (${{ matrix.arch }})
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       matrix:
-        arch: [x86_64]
+        include:
+          - arch: x86_64
+            release: "15.0"
+          - arch: i386
+            release: "14.4"
 
     steps:
       - uses: actions/checkout@v4
@@ -31,9 +35,10 @@ jobs:
           fetch-depth: 1
 
       - name: Run build in FreeBSD VM
-        uses: vmactions/freebsd-vm@v1.4.2
+        uses: vmactions/freebsd-vm@1
         with:
-          release: "15.0"
+          release: ${{ matrix.release }}
+          arch: ${{ matrix.arch }}
           prepare: |
             export IGNORE_OSVERSION=yes
             # Prefer pkg-static (statically linked) to avoid dynamic lib upgrade failures.
@@ -70,6 +75,6 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: prey2006-freebsd
+          name: prey2006-freebsd-${{ matrix.arch }}
           path: output/freebsd/
           compression-level: 6
