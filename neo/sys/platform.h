@@ -304,6 +304,11 @@ bulk of the codebase, so it is the best place for analyze pragmas.
 #include <assert.h>
 #include <time.h>
 #include <ctype.h>
+#ifdef __HAIKU__
+// Haiku defines toupper/tolower as macros; ::toupper() fails to compile with macros.
+#undef toupper
+#undef tolower
+#endif
 #include <cstddef>
 #include <typeinfo>
 #include <errno.h>

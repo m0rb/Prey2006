@@ -28,6 +28,8 @@ function(add_gamepak)
 	set(_pkg_macosx  "game01.pk4")
 	set(_pkg_linux   "game02.pk4")
 	set(_pkg_freebsd "game03.pk4")
+	set(_pkg_openbsd "game03.pk4")
+	set(_pkg_haiku   "game04.pk4")
 	set(_pkg "${_pkg_${_os}}")
 
 	# Filetype for the game dll (.dll / .dylib / .so)
@@ -52,6 +54,8 @@ function(add_gamepak)
 	set(_id_macosx  1)
 	set(_id_linux   2)
 	set(_id_freebsd 3)
+	set(_id_openbsd 3)
+	set(_id_haiku   4)
 	set(_os_id "${_id_${_os}}")
 
 	# The actual heart of this function, i opted to hardcode it here because
