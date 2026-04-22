@@ -26,7 +26,7 @@ jobs:
         include:
           - arch: x86_64
             release: "15.0"
-          - arch: i386
+          - arch: i686
             release: "14.4"
 
     steps:
