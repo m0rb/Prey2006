@@ -157,7 +157,7 @@ If you have questions concerning this license or the applicable additional terms
 #ifdef __unix__
 	#if defined( __linux__ )
 		#define BUILD_OS_ID				2
-	#elif defined( __FreeBSD__ )
+	#elif defined( __FreeBSD__ ) || defined( __OpenBSD__ )
 		#define BUILD_OS_ID				3
 	#endif
 	
@@ -186,6 +186,36 @@ If you have questions concerning this license or the applicable additional terms
 	#define ASSERT						assert
 
 	#define ID_INLINE					inline
+	#define ID_STATIC_TEMPLATE
+
+	#define assertmem( x, y )
+
+	#define strtok_s	strtok_r
+#endif
+
+// Haiku
+#ifdef __HAIKU__
+	#define BUILD_OS_ID				4
+
+	#define _alloca16( x )			(({assert( (x)<ID_MAX_ALLOCA_SIZE );}),((void *)((((uintptr_t)__builtin_alloca( (x)+15 )) + 15) & ~15)))
+	#define _alloca( x )			( ({assert((x)<ID_MAX_ALLOCA_SIZE);}), __builtin_alloca( (x) ) )
+
+	#ifdef GAME_DLL
+		#define ID_GAME_API				__attribute__((visibility ("default")))
+	#else
+		#define ID_GAME_API
+	#endif
+
+	#define ALIGN16( x )			x
+	#define PACKED					__attribute__((packed))
+
+	#define PATHSEPERATOR_STR		"/"
+	#define PATHSEPERATOR_CHAR		'/'
+
+	#define __cdecl
+	#define ASSERT					assert
+
+	#define ID_INLINE				inline
 	#define ID_STATIC_TEMPLATE
 
 	#define assertmem( x, y )
