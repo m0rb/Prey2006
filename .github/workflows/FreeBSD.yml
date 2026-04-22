@@ -26,9 +26,10 @@ jobs:
         include:
           - arch: x86_64
             release: "15.0"
+          - arch: i386
+            release: "14.2"
           - arch: i686
-            release: "14.4"
-
+            release: "14.2"
     steps:
       - uses: actions/checkout@v4
         with:
