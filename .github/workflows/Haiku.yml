@@ -1,0 +1,64 @@
+name: Haiku Auto-Builds
+
+on:
+  push:
+    branches:
+      - "main"
+    paths-ignore:
+      - .github/workflows/Linux.yml
+      - .github/workflows/Windows.yml
+  pull_request:
+    types: [edited, opened, synchronize]
+    paths-ignore:
+      - .github/workflows/Linux.yml
+      - .github/workflows/Windows.yml
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  build:
+    name: Haiku Auto-Build (${{ matrix.arch }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            release: "r1beta5"
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Run build in Haiku VM
+        uses: vmactions/haiku-vm@v1
+        with:
+          release: ${{ matrix.release }}
+          arch: ${{ matrix.arch }}
+          prepare: |
+            attempt=0
+            until [ "$attempt" -ge 3 ]
+            do
+              pkgman install -y cmake ccache pkgconf ninja openal sdl2 tree zip git && break
+              attempt=$((attempt+1))
+              echo "pkgman install failed, retrying ($attempt/3)" >&2
+              sleep $((attempt * 5))
+            done
+          run: |
+            echo "::group::Configure"
+            mkdir -p build
+            cd build
+            cmake -G Ninja -DDEDICATED=ON -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache ../neo/
+            echo "::endgroup::"
+            echo "::group::Build"
+            ninja
+            echo "::endgroup::"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: prey2006-haiku-${{ matrix.arch }}
+          path: output/haiku/
+          compression-level: 6
