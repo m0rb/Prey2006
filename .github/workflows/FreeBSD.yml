@@ -35,7 +35,7 @@ jobs:
           fetch-depth: 1
 
       - name: Run build in FreeBSD VM
-        uses: vmactions/freebsd-vm@1
+        uses: vmactions/freebsd-vm@v1.4.5
         with:
           release: ${{ matrix.release }}
           arch: ${{ matrix.arch }}
