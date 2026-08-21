@@ -635,9 +635,9 @@ set(src_framework
 set_source_files_properties(
 	framework/miniz/miniz.c
 	framework/minizip/ioapi.c
+	framework/minizip/unzip.cpp
 	PROPERTIES
 	SKIP_PRECOMPILE_HEADERS ON
-	LANGUAGE C
 )
 
 always_optimize_sourcefile(framework/miniz/miniz.c)
