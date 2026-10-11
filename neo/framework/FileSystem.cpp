@@ -3326,6 +3326,30 @@ idFile *idFileSystemLocal::OpenFileReadFlags( const char *relativePath, int sear
 				if ( pak->binary == BINARY_NO ) {
 					continue; // not a binary pak, skip
 				}
+				// make sure the binary pak is for this OS
+				bool thisOS = false;
+				for ( pakFile = pak->hashTable[HashFileName( BINARY_CONFIG )]; pakFile; pakFile = pakFile->next ) {
+					if ( !FilenameCompare( pakFile->name, BINARY_CONFIG ) ) {
+						idFile *confFile = ReadFileFromZip( pak, pakFile, BINARY_CONFIG );
+						char *buf = new char[ confFile->Length() + 1 ];
+						confFile->Read( (void *)buf, confFile->Length() );
+						buf[ confFile->Length() ] = '\0';
+						idLexer *lexConf = new idLexer( buf, confFile->Length(), confFile->GetFullPath(), LEXFL_NOFATALERRORS );
+						idToken token;
+						while ( lexConf->ReadToken( &token ) ) {
+							if ( token.IsNumeric() && atoi( token ) == BUILD_OS_ID ) {
+								thisOS = true;
+							}
+						}
+						CloseFile( confFile );
+						delete lexConf;
+						delete[] buf;
+						break;
+					}
+				}
+				if ( !thisOS ) {
+					continue; // binary pak for another OS, skip
+				}
 			}
 
 			for ( pakFile = pak->hashTable[hash]; pakFile; pakFile = pakFile->next ) {
@@ -3893,7 +3917,7 @@ void idFileSystemLocal::FindDLL( const char *name, char _dllPath[ MAX_OSPATH ], 
 				dllPath = RelativePathToOSPath( dllName, "fs_basepath" );
 				CopyFile( dllFile, dllPath );
 				CloseFile( dllFile );
-				dllFile = OpenFileReadFlags( dllName, FSFLAG_SEARCH_DIRS );
+				dllFile = OpenExplicitFileRead( dllPath );
 				if ( !dllFile ) {
 					common->Error( "DLL extraction to fs_basepath failed\n" );
 				} else if ( updateChecksum ) {
@@ -3932,7 +3956,7 @@ void idFileSystemLocal::FindDLL( const char *name, char _dllPath[ MAX_OSPATH ], 
 						dllPath = RelativePathToOSPath( dllName, "fs_basepath" );
 						CopyFile( dllFile, dllPath );
 						CloseFile( dllFile );
-						dllFile = OpenFileReadFlags( dllName, FSFLAG_SEARCH_DIRS );
+						dllFile = OpenExplicitFileRead( dllPath );
 						if ( !dllFile ) {
 							common->Error( "DLL extraction to fs_basepath failed\n" );
 						} else {
